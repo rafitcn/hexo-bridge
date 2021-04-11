@@ -121,4 +121,5 @@ module.exports = {
   deleteDirectory: deleteDirectory,
   deleteFile: deleteFile,
   rename: rename,
+  moveAsset: moveAsset
 };

@@ -8,12 +8,9 @@ import FrontMatterEditor from "../shared/components/FrontMatterEditor";
 import { Notification } from "../shared/helpers/notification";
 import PageEditorActionDropdown from "./PageEditorActionDropdown";
 import GenericError from "../shared/components/GenericError";
-import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/theme-xcode";
-import "ace-builds/src-noconflict/mode-markdown";
-import "ace-builds/src-min-noconflict/ext-searchbox";
 import { AxiosRequestConfig } from "axios";
 import { RouteParams } from "../shared/types/router";
+import VditorApp from "../shared/components/Vditor";
 
 const frontMatterHelper = require("hexo-front-matter");
 
@@ -131,20 +128,19 @@ export default function PageEditorPage() {
           </ButtonGroup>
         </ControlGroup>
         <div className="code-editor-preview-container">
-          <AceEditor
-            height="90vh"
-            width="100vw"
-            mode="markdown"
-            theme="xcode"
-            wrapEnabled={true}
-            value={content}
-            onChange={(newContent: string) => {
-              setContent(newContent);
-              setHasUnsavedChanges(true);
-            }}
-            fontSize={userPrefs.editorFontSize || 14}
-            showPrintMargin={false}
-            editorProps={{ $blockScrolling: true }}
+          <VditorApp  lang={userPrefs.editorLang || "zh_CN"} value={content} mode={userPrefs.editorMode || 'sv'}
+                     esc={(value => {
+                       setContent(value)
+                       setHasUnsavedChanges(true)
+                     })}
+                     ctrlEnter={(value => {
+                       setContent(value)
+                       setHasUnsavedChanges(true)
+                     })}
+                     blur={(value => {
+                       setContent(value)
+                       setHasUnsavedChanges(true)
+                     })}
           />
         </div>
         <Prompt when={hasUnsavedChanges} message="You have unsaved changes, are you sure you want to leave?" />

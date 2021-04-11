@@ -11,6 +11,7 @@ const scaffolds = require("./scaffold.js");
 const settings = require("./setting.js");
 const plugins = require("./plugin.js");
 const themes = require("./theme.js");
+const upload = require("./upload.js");
 
 function setupHelpers(req, res, next) {
   res.sendSuccess = (data) => {
@@ -24,6 +25,7 @@ function setupHelpers(req, res, next) {
 }
 
 hexo.extend.filter.register("server_middleware", (app) => {
+  app.use(hexo.config.root + "api/", bodyParser.json())
   app.use(hexo.config.root + "api/", bodyParser.urlencoded({ limit: "500mb", extended: true }));
   app.use(setupHelpers);
   posts.setup(hexo);
@@ -33,6 +35,7 @@ hexo.extend.filter.register("server_middleware", (app) => {
   settings.setup(hexo);
   plugins.setup(hexo);
   themes.setup(hexo);
+  upload.setup(hexo);
 
   //Serve files from the client web app
   app.use(hexo.config.root + "bridge/static/", serveStatic(path.join(__dirname, "www/static")));
@@ -326,4 +329,10 @@ hexo.extend.filter.register("server_middleware", (app) => {
       res.sendError("Sorry, something went wrong.");
     }
   });
+
+  // API:UPLOAD
+  app.use(hexo.config.root+"api/upload/editor", upload.editor)
+  app.use(hexo.config.root+"api/upload/fetch", function (req, res) {
+    return upload.fetch(req.body.url, res)
+  })
 });

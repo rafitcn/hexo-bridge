@@ -8,13 +8,10 @@ import {Notification} from "../shared/helpers/notification";
 import {DatePicker} from "@blueprintjs/datetime";
 import FrontMatterEditor from "../shared/components/FrontMatterEditor";
 import {parsePostData, validateRequiredPostMetadataFields} from "../shared/helpers/frontMatterParserHelper";
-import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/theme-xcode";
-import "ace-builds/src-noconflict/mode-markdown";
-import 'ace-builds/src-min-noconflict/ext-searchbox';
 import GenericError from "../shared/components/GenericError";
 import {AxiosRequestConfig} from "axios";
 import {RouteParams} from "../shared/types/router";
+import VditorApp from "../shared/components/Vditor";
 
 const frontMatterHelper = require('hexo-front-matter');
 //API Config
@@ -144,18 +141,20 @@ export default function PostEditorPage() {
                 </ButtonGroup>
             </ControlGroup>
             <div className="code-editor-preview-container">
-                <AceEditor height="90vh" width="100vw"
-                           mode="markdown" theme="xcode"
-                           wrapEnabled={true}
-                           value={content}
-                           onChange={(newContent: string) => {
-                               setContent(newContent)
-                               setHasUnsavedChanges(true);
-                           }}
-                           fontSize={userPrefs.editorFontSize || 14}
-                           showPrintMargin={false}
-                           editorProps={{$blockScrolling: true}}/>
-                
+                <VditorApp lang={userPrefs.editorLang || 'zh_CN'} value={content} mode={userPrefs.editorMode || 'sv'}
+                           esc={(value => {
+                                setContent(value)
+                                setHasUnsavedChanges(true)
+                           })}
+                           ctrlEnter={(value => {
+                               setContent(value)
+                               setHasUnsavedChanges(true)
+                           })}
+                           blur={(value => {
+                               setContent(value)
+                               setHasUnsavedChanges(true)
+                           })}
+                />
             </div>
             <Prompt
                 when={hasUnsavedChanges}
